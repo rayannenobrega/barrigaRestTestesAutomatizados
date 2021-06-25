@@ -23,5 +23,6 @@ public class BaseTest implements Constantes{
         RestAssured.responseSpecification = resBuilder.build();
 
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+
     }
 }
