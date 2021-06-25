@@ -26,9 +26,9 @@ public class BarrigaTest extends BaseTest {
         //Login na API e recebimento de TOKEN
         TOKEN = given()
                 .body(login) //Passando o login em formato de MAP para melhor organização
-                .when()
+        .when()
                 .post("/signin")
-                .then()
+        .then()
                 .log().all()
                 .statusCode(200)
                 .extract().path("token")
@@ -87,5 +87,32 @@ public class BarrigaTest extends BaseTest {
         ;
 
     }
+
+    @Test
+    public void deveInserirMovimentacaoSucesso(){
+
+        Movimentacao mov = new Movimentacao();
+        mov.setConta_id(658079);
+        mov.setDescricao("Descrição da movimentação");
+        mov.setEnvolvido("Envolvido na movimentacao");
+        mov.setTipo("REC");
+        mov.setData_transacao("01/01/2000");
+        mov.setData_pagamento("10/05/2010");
+        mov.setValor(100f);
+        mov.setStatus(true);
+
+
+        given()
+                .header("Authorization", "JWT " + TOKEN)
+                .body(mov)
+        .when()
+                .post("/transacoes")
+        .then()
+                .statusCode(201)
+
+        ;
+
+    }
+
 }
 
