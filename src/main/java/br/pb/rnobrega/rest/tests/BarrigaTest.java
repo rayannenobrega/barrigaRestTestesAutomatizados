@@ -63,7 +63,7 @@ public class BarrigaTest extends BaseTest {
     public void deveAlterarContaComSucesso(){
 
         given()
-                .header("Authorization", "JWT " + TOKEN) //API's mais recentes ao inves de 'JWT' se usa 'bearer'.
+                .header("Authorization", "JWT " + TOKEN)
                 .body("{\"nome\": \"conta alterada\"}")
         .when()
                 .put("/contas/658079")//comando do tipo PUT para alteração para /contas/:id
@@ -71,6 +71,21 @@ public class BarrigaTest extends BaseTest {
                 .statusCode(200)
                 .body("nome", is("conta alterada"))
         ;
+    }
+
+    @Test
+    public void naoDeveIncluirContaComNomeRepetido(){
+
+        given()
+                .header("Authorization", "JWT " + TOKEN)
+                .body("{\"nome\": \"conta qualquer\"}")
+        .when()
+                .post("/contas")//Método post para envio
+        .then()
+                .statusCode(400)
+                .body("error", is("Já existe uma conta com esse nome!"))
+        ;
+
     }
 }
 
