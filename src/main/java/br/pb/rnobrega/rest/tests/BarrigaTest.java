@@ -154,6 +154,20 @@ public class BarrigaTest extends BaseTest {
         ;
     }
 
+    @Test
+    public void naoDeveRemoverContaComMovimentacao(){
+
+        given()
+                .header("Authorization", "JWT " + TOKEN)
+        .when()
+                .delete("/contas/655069")// enviando rota de remoção DELETE com o ID da conta que possui movimentação
+        .then()
+                .statusCode(500) // O erro que deve dar é relacionado a própria API. Não foi tratado pelo dev, é um problema de integridade.
+                .body("constraint", is("transacoes_conta_id_foreign"))
+
+        ;
+    }
+
 
 
 }
