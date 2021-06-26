@@ -181,6 +181,17 @@ public class BarrigaTest extends BaseTest {
         ;
     }
 
+    @Test
+    public void deveRemoverMovimentacao(){
+
+        given()
+                .header("Authorization", "JWT " + TOKEN)
+        .when()
+                .delete("/transacoes/609815")//ID da movimentação a ser cancelada que pegamos na URL
+        .then()
+                .statusCode(204)
+        ;
+    }
 
 
 
