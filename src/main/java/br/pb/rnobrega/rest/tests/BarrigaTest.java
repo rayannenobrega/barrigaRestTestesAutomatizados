@@ -167,6 +167,20 @@ public class BarrigaTest extends BaseTest {
 
         ;
     }
+    @Test
+    public void deveCalcularSaldoDasContas(){
+
+        given()
+                .header("Authorization", "JWT " + TOKEN)
+        .when()
+                .get("/saldo")
+        .then()
+                .statusCode(200)
+                .body("find{it.conta_id == 655069}.saldo", is("100.00")) // Com o it nós achamos qual o objeto estamos procurando através do id e pegamos o saldo dele.
+                                                                                // A partir disso nós comparamos com o valor que está em string
+        ;
+    }
+
 
 
 
