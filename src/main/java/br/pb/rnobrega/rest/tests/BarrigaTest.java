@@ -4,6 +4,7 @@ import br.pb.rnobrega.rest.core.BaseTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,22 @@ public class BarrigaTest extends BaseTest {
                 .statusCode(200)
                 .extract().path("token")
         ;
+    }
+
+    //Para evitar repetição de código e ter que colocar essa parte em todas as de movimentação, foi criado um método pra ele.
+    private Movimentacao getMovimentacaoValida(){
+
+        Movimentacao mov = new Movimentacao();
+        mov.setConta_id(658079);
+        mov.setDescricao("Descrição da movimentação");
+        mov.setEnvolvido("Envolvido na movimentacao");
+        mov.setTipo("REC");
+        mov.setData_transacao("01/01/2000");
+        mov.setData_pagamento("10/05/2010");
+        mov.setValor(100f);
+        mov.setStatus(true);
+        return mov;
+
     }
 
     @Test
@@ -91,16 +108,7 @@ public class BarrigaTest extends BaseTest {
     @Test
     public void deveInserirMovimentacaoSucesso(){
 
-        Movimentacao mov = new Movimentacao();
-        mov.setConta_id(658079);
-        mov.setDescricao("Descrição da movimentação");
-        mov.setEnvolvido("Envolvido na movimentacao");
-        mov.setTipo("REC");
-        mov.setData_transacao("01/01/2000");
-        mov.setData_pagamento("10/05/2010");
-        mov.setValor(100f);
-        mov.setStatus(true);
-
+        Movimentacao mov = getMovimentacaoValida();
 
         given()
                 .header("Authorization", "JWT " + TOKEN)
@@ -128,6 +136,24 @@ public class BarrigaTest extends BaseTest {
                 .body("msg", hasItems("Data da Movimentação é obrigatório", "Data do pagamento é obrigatório","Descrição é obrigatório","Interessado é obrigatório", "Valor é obrigatório", "Valor deve ser um número","Conta é obrigatório", "Situação é obrigatório"))
         ;
     }
+
+    @Test
+    public void naoDeveCadastrarMovimentacaoFutura(){
+        Movimentacao mov = getMovimentacaoValida();
+        mov.setData_transacao("20/05/2090");
+
+        given()
+                .header("Authorization", "JWT " + TOKEN)
+                .body(mov)
+        .when()
+                .post("/transacoes")
+        .then()
+                .statusCode(400)
+                .body("$", hasSize(1)) //verificando a quantidade de mensagens que retorna.
+                .body("msg", hasItem("Data da Movimentação deve ser menor ou igual à data atual"))
+        ;
+    }
+
 
 
 }
